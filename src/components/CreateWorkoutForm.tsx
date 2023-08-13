@@ -1,11 +1,13 @@
 import React, { useRef, useContext, useState } from "react";
+import {useNavigate} from "react-router-dom";
 import ExcersiseForm from "./ExerciseForm";
 import Exercise from "../models/exercise";
 import classes from "./styles/Form.module.css";
 import ExerciseModal from "./ExerciseModal";
 import { AuthContext } from "../store/auth-context";
 import StrengthExercise from "../models/strengthExercise";
-import {API} from "../config";
+import { API } from "../config";
+import EnduranceExercise from "../models/enduranceExercise";
 
 const CreateWorkoutForm: React.FC = () => {
   const titleInputRef = useRef<HTMLInputElement>(null);
@@ -14,6 +16,7 @@ const CreateWorkoutForm: React.FC = () => {
   const [showExerciseModal, setShowExerciseModal] = useState(false);
 
   const authCtx = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const handleShowExerciseModal = () => {
     setShowExerciseModal((showExerciseModal) => !showExerciseModal);
@@ -35,26 +38,27 @@ const CreateWorkoutForm: React.FC = () => {
         title: enteredTitle,
         description: enteredDescription,
         exercises: exercises,
-      })
+      }),
     }).then((res) => {
       console.log("success!");
       clearForm();
+      navigate("/my-workouts");
     });
   };
 
   const clearForm = () => {
-    titleInputRef.current!.value = '';
-    descriptionInputRef.current!.value = '';
+    titleInputRef.current!.value = "";
+    descriptionInputRef.current!.value = "";
     setExercises([]);
-  }
+  };
 
   const addExercisHandler = (exercise: Exercise) => {
     setExercises((prev) => [...prev, exercise]);
   };
 
-  const deleteExercise = (exerciseId: string) => {
-    setExercises(prev => prev.filter(ex => ex.id !== Number(exerciseId)));
-  }
+  const deleteExercise = (exerciseKey: string) => {
+    setExercises((prev) => prev.filter((ex) => ex.key !== exerciseKey));
+  };
 
   const showExerciseForm = (event: React.FormEvent) => {
     event.preventDefault();
@@ -109,18 +113,37 @@ const CreateWorkoutForm: React.FC = () => {
         {/* <hr className={classes["exercise-divide"]} /> */}
         <table>
           <tbody>
-          {exercises.map(
-            (ex) =>
-              ex instanceof StrengthExercise && (
-                <tr key={ex.id}>
+            {exercises.map((ex) => {
+              if (ex instanceof StrengthExercise) {
+                return (
+                  <tr key={ex.key}>
+                    <td>
+                      <div>{`${ex.name} ${ex.sets} sets of ${ex.reps} reps`}</div>
+                      <div
+                        onClick={() => deleteExercise(ex.key)}
+                        className={classes["delete-exercise"]}
+                      >
+                        x
+                      </div>
+                    </td>
+                  </tr>
+                );
+              } else {
+                return (
+                  <tr key={ex.key}>
                   <td>
-                    <div>{`${ex.name} ${ex.sets} sets of ${ex.reps} reps`}</div>
-                    <div onClick={() => deleteExercise(ex.id + "")} className={classes["delete-exercise"]}>x</div>
+                    <div>{`${ex.name} time: ${(ex as EnduranceExercise).distance} distance: ${(ex as EnduranceExercise).time}`}</div>
+                    <div
+                      onClick={() => deleteExercise(ex.key)}
+                      className={classes["delete-exercise"]}
+                    >
+                      x
+                    </div>
                   </td>
                 </tr>
-              )
-            // TODO: other instnace types
-          )}
+                )
+              }
+            })}
           </tbody>
         </table>
 

@@ -19,43 +19,67 @@ const Navbar = () => {
   const logout = () => {
     showNavbar();
     authCtx.logout();
-  }
+  };
 
   return (
     <header>
       <h3>MyProFitClub</h3>
       <nav className={`${linksVisible && classes["responsive_nav"]}`}>
-        <NavLink className={(navData) => navData.isActive ? classes.active : ''} to="/"  onClick={showNavbar}>
+        {/* <NavLink className={(navData) => navData.isActive ? classes.active : ''} to="/"  onClick={showNavbar}>
           Home
-        </NavLink>
-        <NavLink className={(navData) => navData.isActive ? classes.active : ''} to="/fit-challenge" onClick={showNavbar}>
+        </NavLink> */}
+        {/* <NavLink className={(navData) => navData.isActive ? classes.active : ''} to="/fit-challenge" onClick={showNavbar}>
           Fit Challenge
-        </NavLink>
-        <NavLink className={(navData) => navData.isActive ? classes.active : ''} to="/workouts" onClick={showNavbar}>
-          Find Workouts
-        </NavLink>
+        </NavLink> */}
         {isLoggedIn && (
-          <NavLink className={(navData) => navData.isActive ? classes.active : ''}  to="/my-workouts" onClick={showNavbar}>
+          <NavLink
+            className={(navData) => (navData.isActive ? classes.active : "")}
+            to="/my-workouts"
+            onClick={showNavbar}
+          >
             My Workouts
           </NavLink>
         )}
         {!isLoggedIn && (
-          <NavLink className={(navData) => navData.isActive ? classes.active : ''}  to="/login" onClick={showNavbar}>
+          <NavLink
+            className={(navData) => (navData.isActive ? classes.active : "")}
+            to="/login"
+            onClick={showNavbar}
+          >
             Login
           </NavLink>
         )}
-           {isLoggedIn && (
-          <NavLink className={(navData) => navData.isActive ? classes.active : ''}  to="/user-profile" onClick={showNavbar}>
+        {isLoggedIn && (
+          <NavLink
+            className={(navData) => (navData.isActive ? classes.active : "")}
+            to="/user-profile"
+            onClick={showNavbar}
+          >
             My Profile
           </NavLink>
         )}
         {isLoggedIn && (
-          <NavLink className={(navData) => navData.isActive ? classes.active : ''}  to="/create-workout" onClick={showNavbar}>
+          <NavLink
+            className={(navData) => (navData.isActive ? classes.active : "")}
+            to="/create-workout"
+            onClick={showNavbar}
+          >
             Create Workout
           </NavLink>
         )}
-         {isLoggedIn && (
-          <NavLink className={(navData) => navData.isActive ? classes.active : ''}  to="/login" onClick={logout}>
+        <NavLink
+          className={(navData) => (navData.isActive ? classes.active : "")}
+          to="/workouts"
+          onClick={showNavbar}
+        >
+          Find Workouts
+        </NavLink>
+        {isLoggedIn && (
+          <NavLink
+            className={(navData) => (navData.isActive ? classes.active : "")}
+            to="/login"
+            onClick={logout}
+          >
             Logout
           </NavLink>
         )}

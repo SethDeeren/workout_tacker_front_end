@@ -1,4 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import { AuthContext } from "../store/auth-context";
 import { NavLink } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -81,7 +83,9 @@ const MyWorkoutList = () => {
     navigate(`/my-workouts/${id}/exercises`);
   };
 
-  const handleEditLinkTouch = (e: React.MouseEvent<HTMLElement>) => {e.stopPropagation()};
+  const handleEditLinkTouch = (e: React.MouseEvent<HTMLElement>) => {
+    e.stopPropagation();
+  };
 
   return (
     <div className={styles.myWorkoutList}>
@@ -93,7 +97,12 @@ const MyWorkoutList = () => {
           className={styles.myWorkoutListItem}
         >
           {workout.title}
-          <NavLink onClick={handleEditLinkTouch} to={`/my-workouts/${workout.id}`}>edit</NavLink>
+          <NavLink
+            onClick={handleEditLinkTouch}
+            to={`/my-workouts/${workout.id}`}
+          >
+            <FontAwesomeIcon icon={faPenToSquare} size="lg"/>
+          </NavLink>
         </div>
       ))}
     </div>

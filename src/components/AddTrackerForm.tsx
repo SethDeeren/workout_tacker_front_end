@@ -118,18 +118,18 @@ const AddTrackerForm: React.FC = () => {
           <div className={styles.addTrackerInputGroupTitle}>Add Set</div>
           <div className={styles.addTrackerInputGroup}>
             <input
-              onChange={repInputChange} type="number"
-              ref={repsRef}
-              required
-            />
-            <label htmlFor="">Reps</label>
-            <input
               onChange={weightInputChange}
               type="number"
               ref={weightRef}
               required
             />
             <label htmlFor="">Weight</label>
+            <input
+              onChange={repInputChange} type="number"
+              ref={repsRef}
+              required
+            />
+            <label htmlFor="">Reps</label>
             <button className={styles.addTrackerFormSubmittButton}>+</button>
           </div>
         </>

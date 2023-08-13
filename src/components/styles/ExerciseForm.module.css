@@ -44,6 +44,32 @@
     
 }
 
+.deleteSection {
+    color: red;
+    margin-top: 70px;
+    display: flex;
+    flex-direction: column;
+    
+}
+
+.deleteSectionTitle {
+    color: red;
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.deleteSectionSubtitle{
+    color: red;
+    padding: 0.5rem 0;
+}
+
+.deleteSectionButton {
+    align-self: start; 
+    color: red;
+    background: none; 
+    border-color: red;
+}
+
 
 @media (min-width: 40rem) {
     .main-info {

@@ -20,7 +20,7 @@ function App() {
     <React.Fragment>
       <Navbar />
       <Routes>
-        <Route path="/" element={<h1>Home Page</h1>} />
+        {/* <Route path="/" element={<h1>Home Page</h1>} /> */}
         <Route path="/fit-challenge" element={<h1>Fit Challenge</h1>} />
         <Route path="/workouts" element={<WorkoutsList/>} />
         {authCtx.isLoggedIn && (
@@ -29,8 +29,7 @@ function App() {
               <Route path="/my-workouts/:id" element={<MyWorkoutEditPage />} />
               <Route path="/my-workouts/:id/exercises" element={<MyWorkoutExercisesPage />} />
               
-          </Route>
-          
+          </Route>         
         )}
         {authCtx.isLoggedIn && (
           <Route path="/my-workouts/:workoutId/exercises/:exerciseId" element={<MyExerciseTrackerPage />} />
@@ -45,7 +44,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
         )}
         <Route path="/workouts/:id" element={<WorkoutPage/>} />
-        <Route path="*" element={<Navigate replace to="/" />} />
+        <Route path="*" element={authCtx.isLoggedIn ? <Navigate replace to="/my-workouts"/> : <Navigate replace to="/login" />} />
       </Routes>
     </React.Fragment>
   );

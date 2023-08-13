@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import useInput from "../hooks/use-input";
 import Exercise from "../models/exercise";
 import StrengthExercise from "../models/strengthExercise";
 import EnduranceExercise from "../models/enduranceExercise";
@@ -17,52 +18,89 @@ const ExcersiseForm: React.FC<{
     { label: "Endurance", value: "endurance" },
   ];
 
+  const [exercise, setExercise] = useState<Exercise | null>(props.exercise);
+
+  useEffect(() => {
+    console.log("----------------rendered exercise form---------------------------")
+  })
+  const exerciseTypeInput =
+    exercise && exercise.type === "endurance"
+      ? exerciseTypeOptions[1]
+      : exerciseTypeOptions[0];
+
   const [exerciseType, setExerciseType] = useState<
     (typeof exerciseTypeOptions)[0] | undefined
-  >(exerciseTypeOptions[0]);
+  >(exerciseTypeInput);
 
-  const exerciseNameInputRef = useRef<HTMLInputElement>(null);
-  const setsInputRef = useRef<HTMLInputElement>(null);
-  const repsInputRef = useRef<HTMLInputElement>(null);
-  const timeInputRef = useRef<HTMLInputElement>(null);
-  const distanceInputRef = useRef<HTMLInputElement>(null);
+  const exerciseNameInputRef = useRef(
+    exercise ? exercise.name : ""
+  );
+  const setsInputRef = useRef(
+    exercise && exercise.type === "strength"
+      ? (exercise as StrengthExercise).sets
+      : ''
+  );
+  const repsInputRef = useRef(
+    exercise && exercise.type === "strength"
+      ? (exercise as StrengthExercise).reps
+      : ''
+  );
+  const timeInputRef = useRef(
+    exercise && exercise.type === "endurance"
+      ? (exercise as EnduranceExercise).time
+      : ''
+  );
+  const distanceInputRef = useRef(
+    exercise && exercise.type === "endurance"
+      ? (exercise as EnduranceExercise).distance
+      : ''
+  );
 
   const submitHandler = (event: React.FormEvent) => {
     event.preventDefault();
+    console.log(
+      "Exercise Id is ",
+      exercise === null ? null : exercise.id
+    );
+    console.log("Name Input ref value: ", exerciseNameInputRef.current);
+    console.log("type value: ", setsInputRef.current);
+    console.log("Sets Input ref value: ", exerciseType?.value);
+    console.log("reps Input ref value: ", setsInputRef.current);
+    console.log("Sets Input ref value: ", repsInputRef.current);
+
     if (
       exerciseType!.value === "strength" &&
-      (
-      exerciseNameInputRef.current?.value === '' ||
-      setsInputRef.current?.value === '' ||
-      repsInputRef.current?.value === ''
-      )
+      (exerciseNameInputRef.current === "" ||
+        setsInputRef.current === '' ||
+        repsInputRef.current === '')
     ) {
       return;
-    } else if(
-      exerciseNameInputRef.current?.value === '' ||
-      timeInputRef.current?.value === '' ||
-      distanceInputRef.current?.value === ''
-    ){
-     return;
+    } else if (
+      exerciseType!.value === "endurance" &&
+      (exerciseNameInputRef.current === "" ||
+        timeInputRef.current === '' ||
+        distanceInputRef.current === '')
+    ) {
+      return;
     }
 
-    const exercise: Exercise =
+    const newExercise: Exercise =
       exerciseType?.value === "strength"
         ? new StrengthExercise(
-            props.exercise === null ? null : props.exercise.id,
-            exerciseNameInputRef.current!.value,
+            exercise === null ? null : exercise.id,
+            exerciseNameInputRef.current,
             exerciseType.value,
-            Number(setsInputRef.current!.value),
-            Number(repsInputRef.current!.value)
+            Number(setsInputRef.current),
+            Number(repsInputRef.current)
           )
         : new EnduranceExercise(
-            props.exercise === null ? null : props.exercise.id,
-            exerciseNameInputRef.current!.value,
+            exercise === null ? null : exercise.id,
+            exerciseNameInputRef.current,
             exerciseType!.value,
-            Number(timeInputRef.current!.value),
-            Number(distanceInputRef.current!.value)
+            Number(timeInputRef.current),
+            Number(distanceInputRef.current)
           );
-    props.addExercise(exercise);
+    props.addExercise(newExercise);
     props.onClose();
   };
 
@@ -75,7 +113,8 @@ const ExcersiseForm: React.FC<{
           </label>
           <input
             id="exercise-name"
-            ref={exerciseNameInputRef}
+            defaultValue={exerciseNameInputRef.current}
+            onChange={(e) => (exerciseNameInputRef.current = e.target.value)}
             className={styles.name}
             type="text"
             placeholder="Exercise Name"
@@ -96,14 +135,20 @@ const ExcersiseForm: React.FC<{
             {exerciseType!.value == "strength" && (
               <>
                 <input
-                  ref={setsInputRef}
+                  defaultValue={setsInputRef.current}
+                  onChange={(e) =>
+                    (setsInputRef.current = Number(e.target.value))
+                  }
                   className={styles["input-item"]}
                   type="number"
                   placeholder="Sets"
                   required
                 />
                 <input
-                  ref={repsInputRef}
+                  defaultValue={repsInputRef.current}
+                  onChange={(e) =>
+                    (repsInputRef.current = Number(e.target.value))
+                  }
                   className={styles["input-item"]}
                   type="number"
                   placeholder="Reps"
@@ -114,14 +159,20 @@ const ExcersiseForm: React.FC<{
             {exerciseType!.value == "endurance" && (
               <>
                 <input
-                  ref={timeInputRef}
+                  defaultValue={timeInputRef.current}
+                  onChange={(e) =>
+                    (timeInputRef.current = Number(e.target.value))
+                  }
                   className={styles["input-item"]}
                   type="number"
                   placeholder="Time"
                   required
                 />
                 <input
-                  ref={distanceInputRef}
+                  defaultValue={distanceInputRef.current}
+                  onChange={(e) =>
+                    (distanceInputRef.current = Number(e.target.value))
+                  }
                   className={styles["input-item"]}
                   type="number"
                   placeholder="Distance"
@@ -131,10 +182,43 @@ const ExcersiseForm: React.FC<{
             )}
           </div>
         )}
-        <button onClick={submitHandler}>Add Exercise</button>
+        <button onClick={submitHandler}>
+          {exercise ? "Update Exercise" : "Add Exercise"}
+        </button>
+
+        {exercise && <div className={styles.deleteSection}>
+                  <div className={styles.deleteSectionTitle}>Warning</div>
+                  <p className={styles.deleteSectionSubtitle}>
+                    All trackers for this exercise will be lost
+                  </p>
+                  <button
+                    onClick={deleteExerciseHandler}
+                    className={styles.deleteSectionButton}
+                  >
+                    Delete
+                  </button>
+                </div>
+        }
       </form>
     </Modal>
   );
+
+  function deleteExerciseHandler(e: React.FormEvent) {
+    e.preventDefault();
+    if(exercise) {
+      if(window.confirm("All trackers for this exercise will be lost. Are you sure you want to delete this exercise?")){
+        setExercise(null);
+        clearForm();
+      }
+    }
+  }
+
+  function clearForm() {
+    repsInputRef.current = "";
+    setsInputRef.current = "";
+    timeInputRef.current = "";
+    distanceInputRef.current = "";
+  }
 };
 
 export default ExcersiseForm;
